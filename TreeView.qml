@@ -20,6 +20,15 @@ ScrollView {
     property real rowFontSize: 20
     property real rowHeight: 20
 
+    property color rowSelectedActiveColor: "#07c"
+    property color rowSelectedInactiveColor: "#999"
+    property color headerDelegateColor: "gray"
+    property color headerDelegateDividerColor: "#ccc"
+    property color headerHighlightColor: "#3E4751"
+    property bool useSystemPalette: true
+    property color selectedTextColor: "blue"
+    property color rowDelegateDividerColor: "#ccc"
+
     //TODO: MAKE THIS A SINGLETON: enum NOT AVAILABLE IN GLOBAL Qt. NAMESPACE
     //Enum values according to: https://doc.qt.io/qt-5/qabstracstitemview.html#enumSelectionMode-enum
 
@@ -42,79 +51,92 @@ ScrollView {
 
     //EDIT: FROM BasicTableViewStyle
     property Component itemDelegate: Item {
-            height: rowHeight //Math.max(16, label.implicitHeight)
-            property int implicitWidth: label.implicitWidth + 20
+        height: rowHeight //Math.max(16, label.implicitHeight)
+        property int implicitWidth: label.implicitWidth + 20
 
-            Text {
-                id: label
-                width: parent.width - x - (horizontalAlignment === Text.AlignRight ? 8 : 1)
-                x: (styleData.hasOwnProperty("depth") && styleData.column === 0) ? 0 :
-                   horizontalAlignment === Text.AlignRight ? 1 : 8
+        Text {
+            id: label
+            width: parent.width - x - (horizontalAlignment === Text.AlignRight ? 8 : 1)
+            x: (styleData.hasOwnProperty("depth") && styleData.column === 0) ? 0 :
+               horizontalAlignment === Text.AlignRight ? 1 : 8
 
-                horizontalAlignment: Text.AlignLeft //styleData.textAlignment
+            horizontalAlignment: Text.AlignLeft //styleData.textAlignment
 
-                //EDIT
-                verticalAlignment: Text.AlignVCenter
+            //EDIT
+            verticalAlignment: Text.AlignVCenter
 
-                //EDIT
-                font.pixelSize: rowFontSize
+            //EDIT
+            font.pixelSize: rowFontSize
 
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 1
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 1
 
-                elide: styleData.elideMode
-                text: styleData.value !== undefined ? styleData.value.toString() : ""
-                color: styleData.textColor
+            elide: styleData.elideMode
+            text: styleData.value !== undefined ? styleData.value.toString() : ""
+            color: styleData.textColor
 
-                //EDIT
-                //renderType: Settings.isMobile ? Text.QtRendering : Text.NativeRendering
-                renderType: Text.NativeRendering
-
-            }
+            //EDIT
+            //renderType: Settings.isMobile ? Text.QtRendering : Text.NativeRendering
+            renderType: Text.NativeRendering
         }
+    }
 
     //EDIT: COPIED FROM BasicTableViewStyle
     property Component rowDelegate: Rectangle {
         height: rowHeight //Math.round(TextSingleton.implicitHeight * 1.2)
 
-        property color selectedColor: root.activeFocus ? "#07c" : "#999"
+        property color selectedColor: root.activeFocus ? rowSelectedActiveColor : rowSelectedInactiveColor
 
         color: styleData.selected ? selectedColor :
                                     !styleData.alternate ? alternateBackgroundColor : backgroundColor
+        Rectangle {
+            width: parent.width
+            height: 1
+            y: 1
+            color: rowDelegateDividerColor
+            anchors.bottom: parent.bottom
+        }
     }
 
     //EDIT: COPIED FROM BasicTableViewStyle
     property Component headerDelegate:
         //EDIT: REPLACED BorderImage by Rectangle
         Rectangle {
-        height: rowHeight // Math.round(textItem.implicitHeight * 1.2)
-        color: "gray"
+            height: rowHeight // Math.round(textItem.implicitHeight * 1.2)
+            color: headerDelegateColor
 
-        Text {
-            id: textItem
-            anchors.fill: parent
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignLeft //styleData.textAlignment
-            anchors.leftMargin: horizontalAlignment === Text.AlignLeft ? 12 : 1
-            anchors.rightMargin: horizontalAlignment === Text.AlignRight ? 8 : 1
-            text: styleData.value
-            elide: Text.ElideRight
-            color: textColor
+            Text {
+                id: textItem
+                anchors.fill: parent
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignLeft //styleData.textAlignment
+                anchors.leftMargin: horizontalAlignment === Text.AlignLeft ? 12 : 1
+                anchors.rightMargin: horizontalAlignment === Text.AlignRight ? 8 : 1
+                text: styleData.value
+                elide: Text.ElideRight
+                color: textColor
 
-            //EDIT
-            //renderType: Settings.isMobile ? Text.QtRendering : Text.NativeRendering
-            renderType: Text.NativeRendering
+                //EDIT
+                //renderType: Settings.isMobile ? Text.QtRendering : Text.NativeRendering
+                renderType: Text.NativeRendering
 
-            //EDIT
-            font.pixelSize: rowFontSize
+                //EDIT
+                font.pixelSize: rowFontSize
+            }
+            Rectangle {
+                width: 1
+                height: parent.height - 2
+                y: 1
+                color: headerDelegateDividerColor
+            }
+            Rectangle {
+                width: parent.width
+                height: 1
+                y: 1
+                color: headerDelegateDividerColor
+                anchors.bottom: parent.bottom
+            }
         }
-        Rectangle {
-            width: 1
-            height: parent.height - 2
-            y: 1
-            color: "#ccc"
-        }
-    }
 
     property int sortIndicatorColumn
     property bool sortIndicatorVisible: false
@@ -317,7 +339,7 @@ ScrollView {
             parent: listView
 
             anchors.fill: parent
-            color: palette.base
+            color: useSystemPalette? palette.base : backgroundColor
             z: -2
         }
 
@@ -418,7 +440,7 @@ ScrollView {
                 property bool alternate: alternatingRowColors && rowIndex % 2 === 1
 
                 //EDIT
-                readonly property color itemTextColor: itemSelected ? "blue" : "black"
+                readonly property color itemTextColor: itemSelected ? selectedTextColor : textColor
 
                 property Item branchDecoration: null
 
@@ -529,7 +551,7 @@ ScrollView {
                             height:parent.height
                             opacity: (treeViewMovable && index === repeater.targetIndex && repeater.targetIndex !== repeater.dragIndex) ? 0.5 : 0
                             Behavior on opacity { NumberAnimation { duration: 160 } }
-                            color: palette.highlight
+                            color: useSystemPalette ? palette.highlight : headerHighlightColor
                             visible: modelData.movable
                         }
 
@@ -707,106 +729,106 @@ ScrollView {
     }
 
     __itemDelegateLoader: Loader {
-            id: itemDelegateLoader
+        id: itemDelegateLoader
 
-            width: __column ? __column.width : 0
-            height: parent ? parent.height : 0
-            visible: __column ? __column.visible : false
+        width: __column ? __column.width : 0
+        height: parent ? parent.height : 0
+        visible: __column ? __column.visible : false
 
-            property bool isValid: false
-            sourceComponent: (__model === undefined || !isValid) ? null
-                             : __column && __column.delegate ? __column.delegate : __itemDelegate
+        property bool isValid: false
+        sourceComponent: (__model === undefined || !isValid) ? null
+                         : __column && __column.delegate ? __column.delegate : __itemDelegate
 
-            // All these properties are internal
-            property int __index: index
-            property Item __rowItem: null
-            property var __model: __rowItem ? __rowItem.itemModel : undefined
-            property var __modelData: __rowItem ? __rowItem.itemModelData : undefined
-            property TableViewColumn __column: null
-            property Component __itemDelegate: null
+        // All these properties are internal
+        property int __index: index
+        property Item __rowItem: null
+        property var __model: __rowItem ? __rowItem.itemModel : undefined
+        property var __modelData: __rowItem ? __rowItem.itemModelData : undefined
+        property TableViewColumn __column: null
+        property Component __itemDelegate: null
 
-            property var __mouseArea: mouseArea//null
+        property var __mouseArea: mouseArea//null
 
-            // These properties are exposed to the item delegate
-            readonly property var model: __model
-            readonly property var modelData: __modelData
+        // These properties are exposed to the item delegate
+        readonly property var model: __model
+        readonly property var modelData: __modelData
 
-            //EDIT
-            readonly property int __itemIndentation: 30 * (styleData.depth + 1)
+        //EDIT
+        readonly property int __itemIndentation: 30 * (styleData.depth + 1)
 
-            property TreeModelAdaptor __treeModel: null
+        property TreeModelAdaptor __treeModel: null
 
-            // Exposed to the item delegate
-            property QtObject styleData: QtObject {
-                readonly property int row: __rowItem ? __rowItem.rowIndex : -1
-                readonly property int column: __index
-                readonly property int elideMode: __column ? __column.elideMode : Text.ElideLeft
-                readonly property int textAlignment: __column ? __column.horizontalAlignment : Text.AlignLeft
-                readonly property bool selected: __rowItem ? __rowItem.itemSelected : false
-                readonly property bool hasActiveFocus: __rowItem ? __rowItem.activeFocus : false
-                readonly property bool pressed: __mouseArea && row === __mouseArea.pressedRow && column === __mouseArea.pressedColumn
-                readonly property color textColor: __rowItem ? __rowItem.itemTextColor : "black"
-                readonly property string role: __column ? __column.role : ""
-                readonly property var value: model && model.hasOwnProperty(role) ? model[role] : ""
-                readonly property var index: model ? model["_q_TreeView_ModelIndex"] : __treeModel.index(-1,-1)
-                readonly property int depth: model && column === 0 ? model["_q_TreeView_ItemDepth"] : 0
-                readonly property bool hasChildren: model ? model["_q_TreeView_HasChildren"] : false
-                readonly property bool hasSibling: model ? model["_q_TreeView_HasSibling"] : false
-                readonly property bool isExpanded: model ? model["_q_TreeView_ItemExpanded"] : false
+        // Exposed to the item delegate
+        property QtObject styleData: QtObject {
+            readonly property int row: __rowItem ? __rowItem.rowIndex : -1
+            readonly property int column: __index
+            readonly property int elideMode: __column ? __column.elideMode : Text.ElideLeft
+            readonly property int textAlignment: __column ? __column.horizontalAlignment : Text.AlignLeft
+            readonly property bool selected: __rowItem ? __rowItem.itemSelected : false
+            readonly property bool hasActiveFocus: __rowItem ? __rowItem.activeFocus : false
+            readonly property bool pressed: __mouseArea && row === __mouseArea.pressedRow && column === __mouseArea.pressedColumn
+            readonly property color textColor: __rowItem ? __rowItem.itemTextColor : textColor
+            readonly property string role: __column ? __column.role : ""
+            readonly property var value: model && model.hasOwnProperty(role) ? model[role] : ""
+            readonly property var index: model ? model["_q_TreeView_ModelIndex"] : __treeModel.index(-1,-1)
+            readonly property int depth: model && column === 0 ? model["_q_TreeView_ItemDepth"] : 0
+            readonly property bool hasChildren: model ? model["_q_TreeView_HasChildren"] : false
+            readonly property bool hasSibling: model ? model["_q_TreeView_HasSibling"] : false
+            readonly property bool isExpanded: model ? model["_q_TreeView_ItemExpanded"] : false
 
-                //FROM TableViewItemDelegateLoader styleData QtObject:
-                //SIGNAL HANDLERS ARE INHERITED + CANNOT BE OVERRIDDEN BY SIMPLY REDEFINITION
-                onRowChanged: if (row !== -1) itemDelegateLoader.isValid = true
-            }
+            //FROM TableViewItemDelegateLoader styleData QtObject:
+            //SIGNAL HANDLERS ARE INHERITED + CANNOT BE OVERRIDDEN BY SIMPLY REDEFINITION
+            onRowChanged: if (row !== -1) itemDelegateLoader.isValid = true
+        }
 
-            onLoaded: {
-                item.x = Qt.binding(function() { return __itemIndentation})
-                item.width = Qt.binding(function() { return width - __itemIndentation })
-            }
+        onLoaded: {
+            item.x = Qt.binding(function() { return __itemIndentation})
+            item.width = Qt.binding(function() { return width - __itemIndentation })
+        }
 
-            Loader {
-                id: branchDelegateLoader
-                active: __model !== undefined
-                        && __index === 0
-                        && styleData.hasChildren
-                visible: itemDelegateLoader.width > __itemIndentation
+        Loader {
+            id: branchDelegateLoader
+            active: __model !== undefined
+                    && __index === 0
+                    && styleData.hasChildren
+            visible: itemDelegateLoader.width > __itemIndentation
 
-                sourceComponent: Item {
-                        //EDIT
-                        width: 50 //indentation
-
-                        //EDIT
-                        height: rowHeight //16
-
-                        Text {
-                            visible: styleData.column === 0 && styleData.hasChildren
-                            text: styleData.isExpanded ? "\u25bc" : "\u25b6"
-
-                            //EDIT
-                            font.pixelSize: rowFontSize
-                            color: !root.activeFocus || styleData.selected ? styleData.textColor : "#666"
-
-                            renderType: Text.NativeRendering
-                            style: Text.PlainText
-                            anchors.centerIn: parent
-                            anchors.verticalCenterOffset: 2
-                        }
-                    }
-
-                anchors.right: parent.item ? parent.item.left : undefined
+            sourceComponent: Item {
+                //EDIT
+                width: 50 //indentation
 
                 //EDIT
-                anchors.rightMargin: 0 //__style.__indentation > width ? (__style.__indentation - width) / 2 : 0
+                height: rowHeight //16
 
-                anchors.verticalCenter: parent.verticalCenter
+                Text {
+                    visible: styleData.column === 0 && styleData.hasChildren
+                    text: styleData.isExpanded ? "\u25bc" : "\u25b6"
 
-                property QtObject styleData: itemDelegateLoader.styleData
-                onLoaded: if (__rowItem) __rowItem.branchDecoration = item
+                    //EDIT
+                    font.pixelSize: rowFontSize
+                    color: !root.activeFocus || styleData.selected ? styleData.textColor : textColor
+
+                    renderType: Text.NativeRendering
+                    style: Text.PlainText
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 2
+                }
             }
 
-            __itemDelegate: root.itemDelegate
-            __treeModel: modelAdaptor
+            anchors.right: parent.item ? parent.item.left : undefined
+
+            //EDIT
+            anchors.rightMargin: 0 //__style.__indentation > width ? (__style.__indentation - width) / 2 : 0
+
+            anchors.verticalCenter: parent.verticalCenter
+
+            property QtObject styleData: itemDelegateLoader.styleData
+            onLoaded: if (__rowItem) __rowItem.branchDecoration = item
         }
+
+        __itemDelegate: root.itemDelegate
+        __treeModel: modelAdaptor
+    }
 
     onSelectionModeChanged: if (!!selection) selection.clear()
 

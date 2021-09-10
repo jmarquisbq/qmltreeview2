@@ -159,7 +159,8 @@ int main(int argc, char *argv[])
     fsm->setResolveSymlinks(true);
     engine.rootContext()->setContextProperty("fileSystemModel", fsm);
     engine.rootContext()->setContextProperty("rootPathIndex", fsm->index(fsm->rootPath()));
-    engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:///example.qml")));
+//    engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
 
