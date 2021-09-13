@@ -55,23 +55,17 @@
 //ADDED
 #include "treemodeladaptor.h"
 #include "DisplayFileSystemModel.h"
+#include "QmlTreeViewModels.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
-    qmlRegisterUncreatableType<DisplayFileSystemModel>("com.example", 1, 0,
-                                                       "FileSystemModel", "Cannot create a FileSystemModel instance.");
-
-    //ADDED
-    qmlRegisterType<TreeModelAdaptor>("com.example", 1, 0, "TreeModelAdaptor");
-
     QFileSystemModel *fsm = new DisplayFileSystemModel(&engine);
     fsm->setRootPath(QDir::homePath());
     fsm->setResolveSymlinks(true);
     engine.rootContext()->setContextProperty("fileSystemModel", fsm);
-    // engine.rootContext()->setContextProperty("rootPathIndex", fsm->index(fsm->rootPath()));
     engine.load(QUrl(QStringLiteral("qrc:///example.qml")));
 //    engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
     if (engine.rootObjects().isEmpty())

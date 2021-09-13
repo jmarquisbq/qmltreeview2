@@ -36,6 +36,7 @@ target_link_libraries(QmlTreeview2
 target_sources(QmlTreeview2 PUBLIC
   ${QmlTreeview2_SOURCE_DIR}/treemodeladaptor.h
   ${QmlTreeview2_SOURCE_DIR}/DisplayFileSystemModel.h
+  ${QmlTreeview2_SOURCE_DIR}/QmlTreeViewModels.h
 
   ${QmlTreeview2_SOURCE_DIR}/treemodeladaptor.cpp
   ${QmlTreeview2_SOURCE_DIR}/DisplayFileSystemModel.cpp
