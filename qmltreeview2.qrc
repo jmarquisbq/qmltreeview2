@@ -1,9 +1,7 @@
 <RCC>
-    <qresource prefix="/">
-        <file>main.qml</file>
-        <file>TreeView.qml</file>
-        <file>TableViewColumn.qml</file>
-        <file>example.qml</file>
-		<file>qmldir</file>
-    </qresource>
+  <qresource prefix="/qmltreeview2">
+    <file>TreeView.qml</file>
+    <file>TableViewColumn.qml</file>
+    <file>qmldir</file>
+  </qresource>
 </RCC>

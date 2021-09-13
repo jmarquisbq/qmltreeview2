@@ -1,2 +1,3 @@
 module qmltreeview2
 TreeView 1.0 TreeView.qml
+TableViewColumn 1.0 TableViewColumn.qml

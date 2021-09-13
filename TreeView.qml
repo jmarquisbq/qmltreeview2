@@ -6,7 +6,7 @@ import QtQuick.Controls 2.15
 import QtQml.Models 2.15
 
 //ADDED: FOR TreeModelAdaptor
-import com.example 1.0
+import qmltreeview2 1.0
 
 ScrollView {
     id: root

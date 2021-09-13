@@ -45,7 +45,7 @@ target_sources(QmlTreeview2 PUBLIC
 # -----------------------------------------------------------------------
 # Add in QRC files and have them included in the build
 # -----------------------------------------------------------------------
-set(QmlTreeview2
+set(QmlTreeview2_RCS
   ${QmlTreeview2_SOURCE_DIR}/qmltreeview2.qrc
 )
 # -- Run MOC and UIC on the necessary files

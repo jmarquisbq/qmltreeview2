@@ -1,23 +1,25 @@
-#ifndef QTQMLTRICKSPLUGIN_SMARTDATAMODELS_H
-#define QTQMLTRICKSPLUGIN_SMARTDATAMODELS_H
+#pragma once
 
 #include <QQmlEngine>
 #include <QtQml>
 
 #include "treemodeladaptor.h"
+#include "DisplayFileSystemModel.h"
 
 namespace QmlModelTypes {
 
 static void registerQmlTreeViewModels ()
 {
-    qmlRegisterUncreatableType<DisplayFileSystemModel>("com.example", 1, 0,
-                                                       "FileSystemModel", "Cannot create a FileSystemModel instance.");
+    const char * uri = "qmltreeview2"; // @uri QtQmlTricks.SmartDataModels
+    const int    maj = 1;
+    const int    min = 0;
+    const char * msg = "!!!";
+
+    qmlRegisterUncreatableType<DisplayFileSystemModel>(uri, maj, min, "FileSystemModel", msg);
     //ADDED
-    qmlRegisterType<TreeModelAdaptor>("com.example", 1, 0, "TreeModelAdaptor");
+    qmlRegisterType<TreeModelAdaptor>(uri, maj, min, "TreeModelAdaptor");
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerQmlTreeViewModels)
 
 }
-
-#endif // QTQMLTRICKSPLUGIN_SMARTDATAMODELS_H
