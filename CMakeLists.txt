@@ -35,15 +35,17 @@ target_link_libraries(QmlTreeview2
 
 target_sources(QmlTreeview2 PUBLIC
   ${QmlTreeview2_SOURCE_DIR}/treemodeladaptor.h
+  ${QmlTreeview2_SOURCE_DIR}/DisplayFileSystemModel.h
 
   ${QmlTreeview2_SOURCE_DIR}/treemodeladaptor.cpp
+  ${QmlTreeview2_SOURCE_DIR}/DisplayFileSystemModel.cpp
 )
 
 # -----------------------------------------------------------------------
 # Add in QRC files and have them included in the build
 # -----------------------------------------------------------------------
 set(QmlTreeview2
-  ${QmlTreeview2_SOURCE_DIR}/qml.qrc
+  ${QmlTreeview2_SOURCE_DIR}/qmltreeview2.qrc
 )
 # -- Run MOC and UIC on the necessary files
 QT5_ADD_RESOURCES( QmlTreeview2_Generated_RC_SRCS ${QmlTreeview2_RCS})

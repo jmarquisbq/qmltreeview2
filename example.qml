@@ -125,7 +125,7 @@ ApplicationWindow {
         anchors.fill: parent
         anchors.margins: 2 * 12 + row.height
         model: fileSystemModel
-        rootIndex: rootPathIndex
+        rootIndex: fileSystemModel.rootPathIndex
         selection: sel
         alternatingRowColors: false
         backgroundColor: "#303334"
